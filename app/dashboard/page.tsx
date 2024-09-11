@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { CartesianGrid, XAxis, Line, LineChart, Pie, PieChart, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
-import { BellIcon, DollarSignIcon, HomeIcon, MenuIcon, MountainIcon, SettingsIcon, UsersIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { BellIcon, DollarSignIcon, HomeIcon, MenuIcon, MountainIcon, SettingsIcon, UsersIcon, DocumentIcon, DatabaseIcon, CalendarIcon, FileIcon, HardDriveIcon } from 'lucide-react';
 
 interface Offer {
   id_offre: string;
@@ -38,7 +38,6 @@ interface User {
   prenom: string;
   role: string;
 }
-
 
 const UserPlanDashboard = () => {
   const router = useRouter();
@@ -91,35 +90,49 @@ const UserPlanDashboard = () => {
   }, [activeView]);
 
   return (
-    <div className="flex min-h-screen w-full bg-gray-50">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar setActiveView={setActiveView} fetchUsers={fetchUsers} />
       <div className="flex flex-1 flex-col">
         <Header />
-        <main className="flex-1 p-4 md:p-6">
-          {activeView === 'dashboard' && (
-            <>
-              <UserPlanContent offer={offer} error={error} />
-              <StatsGrid />
-              <ChartsGrid />
-            </>
-          )}
-          {activeView === 'users' && <UserList users={users} error={error} />}
-          {activeView === 'billing' && <BillingView payments={payments} />}
+        <main className="flex-1 p-6 overflow-y-auto">
+          <div className="max-w-7xl mx-auto">
+            {activeView === 'dashboard' && (
+              <>
+                <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+                <UserPlanContent offer={offer} error={error} />
+                <StatsGrid />
+                <ChartsGrid />
+              </>
+            )}
+            {activeView === 'users' && (
+              <>
+                <h1 className="text-3xl font-bold mb-6">User Management</h1>
+                <UserList users={users} error={error} />
+              </>
+            )}
+            {activeView === 'billing' && (
+              <>
+                <h1 className="text-3xl font-bold mb-6">Billing Overview</h1>
+                <BillingView payments={payments} />
+              </>
+            )}
+          </div>
         </main>
       </div>
     </div>
   );
 };
 
-
 function Sidebar({ setActiveView, fetchUsers }: { setActiveView: (view: 'dashboard' | 'users' | 'billing') => void, fetchUsers: () => void }) {
   return (
-    <aside className="hidden w-64 flex-col border-r bg-black p-4 md:flex">
-      <div className="mb-6 flex items-center gap-2">
-        <MountainIcon className="h-6 w-6 text-blue-500" />
-        <span className="text-lg font-bold">Admin dashboard</span>
+    <aside className="hidden w-64 bg-white shadow-md md:flex flex-col">
+      <div className="p-4 border-b">
+        <div className="flex items-center gap-2">
+          <MountainIcon className="h-8 w-8 text-blue-500" />
+          <span className="text-xl font-bold">DocuVault</span>
+        </div>
       </div>
-      <nav className="flex flex-col gap-1">
+      <nav className="flex-1 p-4">
         <NavItem href="#" icon={HomeIcon} label="Dashboard" onClick={() => setActiveView('dashboard')} />
         <NavItem href="#" icon={UsersIcon} label="Users" onClick={() => { setActiveView('users'); fetchUsers(); }} />
         <NavItem href="#" icon={DollarSignIcon} label="Billing" onClick={() => setActiveView('billing')} />
@@ -129,36 +142,38 @@ function Sidebar({ setActiveView, fetchUsers }: { setActiveView: (view: 'dashboa
   );
 }
 
-
 function NavItem({ href, icon: Icon, label, onClick }: { href: string; icon: React.ElementType; label: string; onClick?: () => void }) {
   return (
     <Link
       href={href}
-      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-blue-500"
+      className="flex items-center gap-3 rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 hover:text-blue-500 transition-colors mb-1"
       onClick={onClick}
     >
       <Icon className="h-5 w-5" />
-      {label}
+      <span className="text-sm font-medium">{label}</span>
     </Link>
   );
 }
 
 function Header() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-white px-4 md:px-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="md:hidden">
-          <MenuIcon className="h-6 w-6" />
-          <span className="sr-only">Toggle menu</span>
-        </Button>
-        <h1 className="text-lg font-bold">User Dashboard</h1>
-      </div>
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon">
-          <BellIcon className="h-6 w-6" />
-          <span className="sr-only">Notifications</span>
-        </Button>
-        <UserDropdown />
+    <header className="bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <MenuIcon className="h-6 w-6" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon">
+              <BellIcon className="h-6 w-6" />
+              <span className="sr-only">Notifications</span>
+            </Button>
+            <UserDropdown />
+          </div>
+        </div>
       </div>
     </header>
   );
@@ -168,17 +183,17 @@ function UserDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="overflow-hidden rounded-full">
-          <img src="/api/placeholder/36/36" width={36} height={36} alt="Avatar" className="rounded-full" />
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <img src="/api/placeholder/40/40" width={40} height={40} alt="Avatar" className="rounded-full" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>John Doe</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -186,23 +201,34 @@ function UserDropdown() {
 
 function UserPlanContent({ offer, error }: { offer: Offer | null; error: string }) {
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500 bg-red-100 p-4 rounded-md mb-6">{error}</div>;
   }
 
   if (!offer) {
-    return <div>Loading user plan...</div>;
+    return <div className="text-gray-500 bg-gray-100 p-4 rounded-md mb-6">Loading user plan...</div>;
   }
 
   return (
-    <Card className="mb-6 bg-white">
+    <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Your Current Plan</CardTitle>
+        <CardTitle className="text-2xl">Your Current Plan</CardTitle>
+        <CardDescription>{offer.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p><strong>Plan Name:</strong> {offer.nom_offre}</p>
-        <p><strong>Description:</strong> {offer.description}</p>
-        <p><strong>Max Documents:</strong> {offer.max_doc}</p>
-        <p><strong>Price:</strong> ${offer.prix_offre}</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-500">Plan Name</p>
+            <p className="text-lg font-semibold">{offer.nom_offre}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Max Documents</p>
+            <p className="text-lg font-semibold">{offer.max_doc}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Price</p>
+            <p className="text-lg font-semibold">${offer.prix_offre}</p>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
@@ -210,24 +236,28 @@ function UserPlanContent({ offer, error }: { offer: Offer | null; error: string 
 
 function StatsGrid() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6">
-      <StatCard title="Total Documents" description="Documents in your account" value="150" color="bg-blue-500" />
-      <StatCard title="Used Storage" description="Total storage used" value="2.5 GB" color="bg-green-500" />
-      <StatCard title="Days Left" description="Days until plan renewal" value="15" color="bg-yellow-500" />
-      <StatCard title="Collaborators" description="Team members with access" value="3" color="bg-purple-500" />
+    <div className="grid grid-cols-1 gap-6 mb-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCard title="Total Documents" value="150" icon={<FileIcon className="h-8 w-8" />} color="bg-blue-500" />
+      <StatCard title="Used Storage" value="2.5 GB" icon={<HardDriveIcon className="h-8 w-8" />} color="bg-green-500" />
+      <StatCard title="Days Left" value="15" icon={<CalendarIcon className="h-8 w-8" />} color="bg-yellow-500" />
+      <StatCard title="Collaborators" value="3" icon={<UsersIcon className="h-8 w-8" />} color="bg-purple-500" />
     </div>
   );
 }
 
-function StatCard({ title, description, value, color }: { title: string; description: string; value: string; color: string }) {
+function StatCard({ title, value, icon, color }: { title: string; value: string; icon: React.ReactNode; color: string }) {
   return (
     <Card className={`${color} text-white`}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription className="text-gray-100">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="text-4xl font-bold">{value}</div>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium opacity-75">{title}</p>
+            <p className="text-3xl font-bold mt-1">{value}</p>
+          </div>
+          <div className="rounded-full bg-white bg-opacity-25 p-3">
+            {icon}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
@@ -235,7 +265,7 @@ function StatCard({ title, description, value, color }: { title: string; descrip
 
 function ChartsGrid() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <ChartCard title="Document Upload History" description="Number of documents uploaded over time">
         <DocumentUploadChart />
       </ChartCard>
@@ -248,7 +278,7 @@ function ChartsGrid() {
 
 function ChartCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
-    <Card className="bg-white">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -280,58 +310,7 @@ function DocumentUploadChart() {
     </ResponsiveContainer>
   );
 }
-function BillingView({ payments }: { payments: Payment[] }) {
-  if (payments.length === 0) {
-    return <div>No payment data available.</div>;
-  }
 
-  const paymentDataByDate = payments.map(payment => ({
-    date: payment.date_paiement,
-    amount: payment.montant,
-  }));
-
-  return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Billing Overview</h2>
-      <BillingCharts paymentDataByDate={paymentDataByDate} />
-    </div>
-  );
-}
-
-function BillingCharts({ paymentDataByDate }: { paymentDataByDate: { date: string, amount: number }[] }) {
-  return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ChartCard title="Total Payments Over Time" description="Visualize payments made over time">
-        <PaymentsOverTimeChart data={paymentDataByDate} />
-      </ChartCard>
-      {/* Add more charts as needed */
-      // <ChartCard title="Payment Methods" description="Breakdown of payment methods used">
-
-
-      }
-
-    </div>
-  );
-}
-
-function PaymentsOverTimeChart({ data }: { data: { date: string, amount: number }[] }) {
-  const formattedData = data.map(d => ({
-    date: new Date(d.date).toLocaleDateString(),
-    amount: d.amount,
-  }));
-
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formattedData} margin={{ left: 12, right: 12 }}>
-        <CartesianGrid vertical={false} stroke="#e0e0e0" />
-        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={2} dot={false} />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
 function StorageUsageChart() {
   const data = [
     { type: "PDF", usage: 1.2 },
@@ -363,13 +342,133 @@ function StorageUsageChart() {
   );
 }
 
+function BillingView({ payments }: { payments: Payment[] }) {
+  if (payments.length === 0) {
+    return <div className="text-gray-500 bg-gray-100 p-4 rounded-md">No payment data available.</div>;
+  }
+
+  const paymentDataByDate = payments.map(payment => ({
+    date: payment.date_paiement,
+    amount: payment.montant,
+  }));
+
+  return (
+    <div>
+      <BillingCharts paymentDataByDate={paymentDataByDate} />
+      <RecentPayments payments={payments} />
+    </div>
+  );
+}
+
+function BillingCharts({ paymentDataByDate }: { paymentDataByDate: { date: string, amount: number }[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-2">
+      <ChartCard title="Total Payments Over Time" description="Visualize payments made over time">
+        <PaymentsOverTimeChart data={paymentDataByDate} />
+      </ChartCard>
+      <ChartCard title="Payment Methods" description="Breakdown of payment methods used">
+        <PaymentMethodsChart />
+      </ChartCard>
+    </div>
+  );
+}
+
+function RecentPayments({ payments }: { payments: Payment[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Recent Payments</CardTitle>
+        <CardDescription>Your latest transactions</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {payments.slice(0, 5).map((payment) => (
+              <TableRow key={payment.id_payment}>
+                <TableCell>{new Date(payment.date_paiement).toLocaleDateString()}</TableCell>
+                <TableCell>${payment.montant}</TableCell>
+                <TableCell>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    payment.etat_cout === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {payment.etat_cout}
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PaymentsOverTimeChart({ data }: { data: { date: string, amount: number }[] }) {
+  const formattedData = data.map(d => ({
+    date: new Date(d.date).toLocaleDateString(),
+    amount: d.amount,
+  }));
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={formattedData} margin={{ left: 12, right: 12 }}>
+        <CartesianGrid vertical={false} stroke="#e0e0e0" />
+        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={2} dot={false} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+function PaymentMethodsChart() {
+  const data = [
+    { method: "Credit Card", value: 70 },
+    { method: "PayPal", value: 20 },
+    { method: "Bank Transfer", value: 10 },
+  ];
+
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="method"
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          fill="#8884d8"
+          label
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
 function UserList({ users, error }: { users: User[]; error: string }) {
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>;
   }
 
   return (
-    <Card className="bg-white">
+    <Card>
       <CardHeader>
         <CardTitle>User List</CardTitle>
         <CardDescription>All registered users</CardDescription>
@@ -381,6 +480,7 @@ function UserList({ users, error }: { users: User[]; error: string }) {
               <TableHead>ID</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -389,6 +489,13 @@ function UserList({ users, error }: { users: User[]; error: string }) {
                 <TableCell>{user.id_user}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {user.role}
+                  </span>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

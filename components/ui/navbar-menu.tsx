@@ -1,4 +1,5 @@
-// Remove the duplicate import statement
+"use client";
+import { useState } from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -23,10 +24,10 @@ export const MenuItem = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <div onMouseEnter={() => setActive(item)} className="relative ">
+    <div onMouseEnter={() => setActive(item)} className="relative">
       <motion.p
         transition={{ duration: 0.3 }}
-        className="cursor-pointer text-black hover:opacity-[0.9] dark:text-white"
+        className="cursor-pointer text-cyan hover:opacity-[0.9] dark:text-white"
       >
         {item}
       </motion.p>
@@ -41,7 +42,8 @@ export const MenuItem = ({
               <motion.div
                 transition={transition}
                 layoutId="active"
-                className="bg-white dark:bg-black backdrop-blur-sm rounded-2xl overflow-hidden border border-black/[0.2] dark:border-white/[0.2] shadow-xl"
+                className="backdrop-blur-sm rounded-2xl overflow-hidden border border-black/[0.2] dark:border-white/[0.2] shadow-xl"
+                style={{ background: 'transparent' }} // Make background invisible
               >
                 <motion.div
                   layout
@@ -68,7 +70,8 @@ export const Menu = ({
   return (
     <nav
       onMouseLeave={() => setActive(null)}
-      className="relative rounded-full border border-transparent dark:bg-black dark:border-white/[0.2] bg-white shadow-input flex justify-center space-x-4 px-8 py-6 "
+      className="relative rounded-full border border-transparent flex justify-center space-x-4 px-8 py-6"
+      style={{ background: 'transparent' }} // Make background invisible
     >
       {children}
     </nav>
@@ -79,7 +82,8 @@ export const HoveredLink = ({ children, ...rest }: any) => {
   return (
     <Link
       {...rest}
-      className="text-neutral-700 dark:text-neutral-200 hover:text-black "
+      className="text-neutral-700 dark:text-neutral-200 hover:text-black"
+      style={{ background: 'transparent' }} // Make background invisible
     >
       {children}
     </Link>
@@ -105,7 +109,7 @@ export function MountainIcon(props) {
     >
       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
-  )
+  );
 }
 
 export function LockIcon(props) {
@@ -125,7 +129,7 @@ export function LockIcon(props) {
       <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
-  )
+  );
 }
 
 export function UsersIcon(props) {
@@ -147,7 +151,7 @@ export function UsersIcon(props) {
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
-  )
+  );
 }
 
 export function SearchIcon(props) {
@@ -167,7 +171,7 @@ export function SearchIcon(props) {
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" />
     </svg>
-  )
+  );
 }
 
 export function CheckIcon(props) {
@@ -186,5 +190,5 @@ export function CheckIcon(props) {
     >
       <polyline points="20 6 9 17 4 12" />
     </svg>
-  )
+  );
 }

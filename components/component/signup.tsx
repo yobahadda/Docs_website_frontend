@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 import OfferSelection from './OfferSelection';
+import { motion } from 'framer-motion';
+import { User, Mail, Lock, CreditCard } from 'lucide-react';
 
 interface FormData {
   id_user?: number;
-  username: string; 
+  username: string;
   email: string;
   password: string;
   nom_user: string;
@@ -47,7 +49,6 @@ const Signup = () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/offre');
         setOffers(response.data);
-        console.log("Fetched offers:", response.data);  // Log fetched offers
       } catch (error) {
         console.error('Failed to fetch offers', error);
         setError('Failed to load offers');
@@ -65,7 +66,6 @@ const Signup = () => {
   };
 
   const handleOfferSelect = (offerId: string) => {
-    console.log("Selected Offer ID:", offerId);  // Log selected offer ID
     setFormData({ ...formData, offerId });
   };
 
@@ -94,22 +94,18 @@ const Signup = () => {
 
   const handlePaymentConfirmation = async () => {
     setLoading(true);
-    console.log("Available offers at confirmation:", offers);
-    console.log("Selected Offer ID at confirmation:", formData.offerId);
-  
+
     try {
-      // Convert offerId to a number if it's a string
       const selectedOffer = offers.find(offer => String(offer.id_offre) === String(formData.offerId));
-      console.log("Selected Offer:", selectedOffer);
-  
+
       if (!selectedOffer) {
         throw new Error('Selected offer not found');
       }
-  
+
       if (!formData.id_user) {
         throw new Error('User ID is not defined');
       }
-  
+
       const paymentData = {
         montant: selectedOffer.prix_offre,
         devise: 'USD',
@@ -119,13 +115,13 @@ const Signup = () => {
         id_user: formData.id_user,
         id_offre: selectedOffer.id_offre
       };
-  
+
       await axios.post('http://127.0.0.1:8000/payment/payment', paymentData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-  
+
       setLoading(false);
       router.push('/login');
     } catch (error) {
@@ -134,155 +130,157 @@ const Signup = () => {
       setError(error.message || 'Something went wrong during payment processing');
     }
   };
-  
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-gray-100">
-      <div className="grid w-full max-w-3xl gap-8 rounded-lg bg-white p-8 shadow-lg">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-gray-800 text-center">Sign Up</h2>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <Label htmlFor="username" className="text-gray-700">Username</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+    <div className="flex min-h-screen w-full items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-4xl overflow-hidden rounded-lg bg-card shadow-2xl"
+      >
+        <div className="flex flex-col md:flex-row">
+          <div className="bg-gradient-to-br from-primary to-accent p-8 text-primary-foreground md:w-1/3">
+            <h2 className="mb-6 text-3xl font-bold font-heading">Welcome!</h2>
+            <p className="mb-6">Join our community and unlock exclusive features.</p>
+            <ul className="space-y-2">
+              <li className="flex items-center"><User className="mr-2" size={18} /> Personalized experience</li>
+              <li className="flex items-center"><CreditCard className="mr-2" size={18} /> Secure payments</li>
+              <li className="flex items-center"><Lock className="mr-2" size={18} /> Data protection</li>
+            </ul>
+          </div>
+          <div className="p-8 md:w-2/3">
+            <h2 className="mb-6 text-center text-3xl font-bold font-heading text-foreground">Create an Account</h2>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="username" className="text-sm font-medium text-foreground">Username</Label>
+                  <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full bg-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full bg-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password" className="text-sm font-medium text-foreground">Password</Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full bg-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="nom_user" className="text-sm font-medium text-foreground">Last Name</Label>
+                  <Input
+                    id="nom_user"
+                    name="nom_user"
+                    type="text"
+                    value={formData.nom_user}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full bg-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="prenom" className="text-sm font-medium text-foreground">First Name</Label>
+                  <Input
+                    id="prenom"
+                    name="prenom"
+                    type="text"
+                    value={formData.prenom}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full bg-input text-foreground"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-foreground">Role</Label>
+                  <div className="mt-1 flex space-x-4">
+                    {['user', 'admin', 'manager'].map((role) => (
+                      <label key={role} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="role"
+                          value={role}
+                          checked={formData.role === role}
+                          onChange={handleChange}
+                          className="mr-2 text-primary focus:ring-primary"
+                        />
+                        <span className="text-sm text-foreground capitalize">{role}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                <Label htmlFor="nom_user" className="text-gray-700">Nom</Label>
-                <Input
-                  id="nom_user"
-                  name="nom_user"
-                  type="text"
-                  value={formData.nom_user}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-gray-700">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="m@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              <OfferSelection
+                selectedOfferId={formData.offerId}
+                onSelectOffer={handleOfferSelect}
               />
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <Label htmlFor="password" className="text-gray-700">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-3">
-                <Label htmlFor="prenom" className="text-gray-700">Prenom</Label>
-                <Input
-                  id="prenom"
-                  name="prenom"
-                  type="text"
-                  value={formData.prenom}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="role" className="text-gray-700">Role</Label>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="role-admin"
-                    name="role"
-                    value="admin"
-                    checked={formData.role === 'admin'}
-                    onChange={handleChange}
-                    className="form-radio text-blue-600"
-                  />
-                  <Label htmlFor="role-admin" className="ml-2 text-gray-700">Admin</Label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="role-user"
-                    name="role"
-                    value="user"
-                    checked={formData.role === 'user'}
-                    onChange={handleChange}
-                    className="form-radio text-blue-600"
-                  />
-                  <Label htmlFor="role-user" className="ml-2 text-gray-700">User</Label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="role-manager"
-                    name="role"
-                    value="manager"
-                    checked={formData.role === 'manager'}
-                    onChange={handleChange}
-                    className="form-radio text-blue-600"
-                  />
-                  <Label htmlFor="role-manager" className="ml-2 text-gray-700">Manager</Label>
-                </div>
-              </div>
-            </div>
-            <OfferSelection
-              selectedOfferId={formData.offerId}
-              onSelectOffer={handleOfferSelect}
-            />
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-md hover:from-blue-600 hover:to-teal-600"
-              disabled={loading}
-            >
-              {loading ? 'Signing up...' : 'Sign Up'}
-            </Button>
-            {error && <p className="text-red-500">{error}</p>}
-          </form>
-        </div>
-      </div>
-      {showPaymentModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white rounded-lg p-8 shadow-lg max-w-lg w-full">
-            <h3 className="text-xl font-bold text-gray-800">Confirm Payment</h3>
-            <p>Confirm your payment for the selected plan.</p>
-            <Button
-              onClick={handlePaymentConfirmation}
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-              disabled={loading}
-            >
-              {loading ? 'Processing...' : 'Confirm Payment'}
-            </Button>
-            <Button
-              onClick={() => setShowPaymentModal(false)}
-              className="bg-gray-500 text-white px-4 py-2 rounded mt-4"
-            >
-              Cancel
-            </Button>
+              <Button
+                type="submit"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={loading}
+              >
+                {loading ? 'Signing up...' : 'Sign Up'}
+              </Button>
+              {error && <p className="text-center text-sm text-destructive">{error}</p>}
+            </form>
           </div>
         </div>
+      </motion.div>
+      {showPaymentModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            className="w-full max-w-md overflow-hidden rounded-lg bg-card p-8 shadow-xl"
+          >
+            <h3 className="mb-4 text-2xl font-bold font-heading text-foreground">Confirm Payment</h3>
+            <p className="mb-6 text-muted-foreground">Please confirm your payment for the selected plan.</p>
+            <div className="flex justify-end space-x-4">
+              <Button
+                onClick={() => setShowPaymentModal(false)}
+                variant="outline"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handlePaymentConfirmation}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Confirm Payment'}
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
